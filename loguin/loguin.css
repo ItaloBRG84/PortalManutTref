@@ -1,0 +1,127 @@
+
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    height: 100vh;
+    width: 100%;
+    background-image: url(/loguin/img/confira-a-noticia-sobre-o-xcarb-e-suas-solucoes-para-os-setores-da-construcao-civil-e-industria-no-valor-economico.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Poppins', sans-serif;
+    
+}
+.back-total{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.404);
+    backdrop-filter: blur(3px);
+}
+.div-cx-loguin{
+    background-color: rgba(0, 0, 0, 0.404);
+    backdrop-filter: blur(3px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    border-radius: 20px;
+
+
+
+}
+.logo-loguin{
+padding-top: 50px;
+width: 270px;
+height: auto;
+animation: bounce-in-top 1.1s both;
+
+}
+@keyframes bounce-in-top {
+    0% {
+      transform: translateY(-500px);
+      animation-timing-function: ease-in;
+      opacity: 0;
+    }
+    38% {
+      transform: translateY(0);
+      animation-timing-function: ease-out;
+      opacity: 1;
+    }
+    55% {
+      transform: translateY(-65px);
+      animation-timing-function: ease-in;
+    }
+    72% {
+      transform: translateY(0);
+      animation-timing-function: ease-out;
+    }
+    81% {
+      transform: translateY(-28px);
+      animation-timing-function: ease-in;
+    }
+    90% {
+      transform: translateY(0);
+      animation-timing-function: ease-out;
+    }
+    95% {
+      transform: translateY(-8px);
+      animation-timing-function: ease-in;
+    }
+    100% {
+      transform: translateY(0);
+      animation-timing-function: ease-out;
+    }
+  }
+  
+.h1-loguin{
+margin: 60px;
+font-size: 27px;
+background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.h2-loguin{
+    background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+
+}
+
+.input-loguin{
+    border-style: none;
+    border-radius: 20px;
+    width: 30%;
+    padding: 10px;
+    transition: 0.5s ease;
+    margin-top: 10px;
+
+}
+.input-loguin:hover{
+    transform: scale(1.2);
+    background-color: rgb(238, 238, 238);
+
+}
+.btn-loguin{
+    margin: 50px 50px;
+    padding: 10px 30px;
+    border-style: none;
+    border-radius: 20px;
+    transition: 0.5s ease;
+    cursor: pointer;
+    background-color: #ffa358;
+    
+}
+.btn-loguin:hover{
+    transform: scale(1.2);
+    background-color: #f76f00;
+    color: white;
+    
+}
