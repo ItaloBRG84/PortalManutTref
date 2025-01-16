@@ -61,11 +61,23 @@ const openPopup3 = document.getElementById('openPopupThird');
 const closePopup3 = document.getElementById('closePopup3');
 const popup3 = document.getElementById('popup3');
 
+// Quarto Popup
+const openPopup4 = document.getElementById('openPopupFourth');
+const closePopup4 = document.getElementById('closePopup4');
+const popup4 = document.getElementById('popup4');
+
+// Quinto Popup
+const openPopup5 = document.getElementById('openPopupFifth');
+const closePopup5 = document.getElementById('closePopup5');
+const popup5 = document.getElementById('popup5');
+
 // Garantir que os popups estejam fechados ao carregar a página
 window.addEventListener('load', () => {
   popup.style.display = 'none';
   popup2.style.display = 'none';
   popup3.style.display = 'none';
+  popup4.style.display = 'none';
+  popup5.style.display = 'none';
 });
 
 // Abrir o primeiro popup
@@ -97,4 +109,26 @@ openPopup3.addEventListener('click', () => {
 closePopup3.addEventListener('click', () => {
   popup3.style.display = 'none';
 });
+
+// Abrir o quarto popup
+openPopup4.addEventListener('click', () => {
+  popup4.style.display = 'flex';
+});
+
+// Fechar o quarto popup
+closePopup4.addEventListener('click', () => {
+  popup4.style.display = 'none';
+});
+
+// Abrir o quinto popup
+openPopup5.addEventListener('click', () => {
+  popup5.style.display = 'flex';
+});
+
+// Fechar o quinto popup
+closePopup5.addEventListener('click', () => {
+  popup5.style.display = 'none';
+});
+
+
 
