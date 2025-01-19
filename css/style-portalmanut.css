@@ -4,7 +4,7 @@
     scroll-behavior: smooth;
 }
 body{
-    background: linear-gradient(#fd1d1d,#fcb045,#f89100,#fd1d1d );
+    background: linear-gradient(#fd1d1d,#fcb045,#f89100);
     height: 400vh;
     font-family: 'Poppins', sans-serif;
 
@@ -88,6 +88,24 @@ body{
     transform: translateX(-30px);
 }
 
+.nav-left-fixed{
+    position: sticky;
+    top: 0; 
+    left: 0; 
+    width: 150px;
+    height: 100vh;
+    background-color: lightcoral;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    
+  }
+.h2-nav{
+    padding-top: 100px;
+}
+
+
+
 .div-pai-full-slides{
     display: flex;
 }
@@ -130,11 +148,42 @@ body{
     width: 100% -0px;
     height: auto;
     background-color: transparent;
-    text-align: center;
     margin:40px;
     border-radius: 20px;
     color: white;
+    display: flex;
 
+}
+.h3-obj{
+    width: 50%;
+}
+.div-video{
+    width: 50%;
+    height: auto;
+}
+.div-iframe video{
+    width: 100%;
+    height: 100%;
+}
+
+.produto-trefila{
+    display: flex;
+    flex-wrap: wrap;
+}
+.back-produtos{
+    margin: 20px 70px;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(128, 128, 128, 0.555);
+    border-radius: 50%;
+    transition: 0.5s ease;
+}
+.back-produtos:hover{
+    background-color: rgb(97, 97, 97);
+    transform: scale(1.2);
+}
+.img-produto{
+    transform: translateX(-30%);
 }
 .div-total-cards{
     background-color: transparent;
