@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style-portalmanut.css">
+    <link rel="icon" href="icons/PMGT.png" type="image/png">
     <title>Portal Manutenção Trefilados Resende</title>
 </head>
 <body>
@@ -83,10 +84,14 @@
             <video src=""></video>
         </div>-->
         <div class="produto-trefila">
-            <div class="back-produtos"><img src="/images/destaque-barra-chata.png" class="img-produto"></div>
-            <div class="back-produtos"><img src="/images/destaque-tela-soldada.png" alt="" class="img-produto"></div>
-            <div class="back-produtos"><img src="/images/destaque-vergalhao-50s.png" alt="" class="img-produto"></div>
-            <div class="back-produtos"><img src="/images/site vergalhão.png" alt="" class="img-produto"></div>
+            <div class="div-align-produtos">
+                <div class="back-produtos"><img src="images/destaque-barra-chata.png" class="img-produto"></div>
+                <div class="back-produtos"><img src="images/destaque-tela-soldada.png" alt="" class="img-produto"></div>
+            </div>
+            <div class="div-align-produtos">
+                <div class="back-produtos"><img src="images/destaque-vergalhao-50s.png" alt="" class="img-produto"></div>
+                <div class="back-produtos"><img src="images/site vergalhão.png" alt="" class="img-produto"></div>
+            </div>
         </div>
     </div>
 
@@ -147,17 +152,16 @@
 
             <div class="div-total-cards">
                 <div class="card">
-                    <a href="https://rededistribuicao.arcelormittal.com.br/MES_REDEDISTRIB_WEB/LoginFormServlet" target="_blank">
+                    <a href="http://mes.resende.arcelormittal.com.br/MESBELGO_MAIN_WEB/login/login.jsp" target="_blank">
                         <img src="icons/mes.png" alt="" class="icon-MES">
                     </a>
-                    <h2 class="tit-card"><a href="https://rededistribuicao.arcelormittal.com.br/MES_REDEDISTRIB_WEB/LoginFormServlet" target="_blank">MES</a></h2>
-                    <p class="txt-card"></p>
+                    <h2 class="tit-card"><a href="http://mes.resende.arcelormittal.com.br/MESBELGO_MAIN_WEB/login/login.jsp" target="_blank">MES</a></h2>
+                    <p class="txt-card">Caminho para o MES possibilitando relizar suas funcionalidades em relatório de paradas e mais.</p>
                     <div class="div-ul-li">
                         <ul class="ul-card">
-                            <li><a href="" target="_blank" class="li-card">#############</a></li>
-                            <li><a href="" target="_blank" class="li-card">#############</a></li>
-                            <li><a href="" target="_blank" class="li-card">#############</a></li>
-                            <li><a href="" target="_blank" class="li-card">#############</a></li>
+                            <li><a href="mes.resende.arcelormittal.com.br/MES_TREFILARIA_WEB/consultaParadas.do?method=load&codigoQuickAccess=T320&tipoLinhaProducaoId=21&codLinhaProducaoTref=LAM&ts=1737381159436" target="_blank" class="li-card">Consulta paradas - CE</a></li>
+                            <li><a href="" target="_blank" class="li-card">Consulta paradas - CM</a></li>
+                            <li><a href="https://mes.resende.arcelormittal.com.br/MES_TREFILARIA_WEB/consultaCheckListIPU.do?method=load&codigoQuickAccess=T651&tipoLinhaProducaoId=21&codLinhaProducaoTref=LAM&ts=1737381270948" target="_blank" class="li-card">Consulta check-list</a></li>
                         </ul>
                     </div>
                 </div>
@@ -188,7 +192,7 @@
                         <ul class="ul-card">
                             <li><a href="http://totemindustrial.arcelormittal.com.br/#!/" target="_blank" class="li-card">Peça o seu EPI clicando aqui!</a></li>
                             <li><a href="https://arcelormittal.sharepoint.com/:u:/r/sites/CatalogodeEPIs/SitePages/Home.aspx?csf=1&web=1&e=tgOB0a" target="_blank" class="li-card">Catalogo de EPI</a></li>
-                            <li><a href="" target="_blank" class="li-card">Abra seu CD clicando aqui!</a></li>
+                            <li><a href="" target="_blank" class="li-card">Abra seu CD clicando aqui!*</a></li>
                         </ul>
                     </div>
                 </div>
@@ -235,7 +239,7 @@
 
                 <div class="card">
                     <a href="" target="_blank">
-                        <img src="/Captura de tela 2025-01-10 094447.png" alt="" class="icon-MES">
+                        <img src="/icons/Captura de tela 2025-01-10 094447.png" alt="" class="icon-MES">
                     </a>
                         <a href="" target="_blank"><h2 class="tit-card">AEVO</h2></a>
                     <p class="txt-card">Tem uma ideia? Cadastre no AEVO e faça acontecer!</p>
@@ -303,6 +307,64 @@
                 <button id="openPopupFourth" class="btn-MatrizesBloqueio">Visualize os Diagramas Elétricos</button>
             </div>
 
+            <div class="card">
+                <h2 class="tit-card">Sobressalentes</h2>
+                <p class="txt-card">Pastas e planilhas de informação de codigo sap e sobressalentes de cada máquina da trefilaria de resende.</p>
+                <ul class="ul-card ul-sobressalente">
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EuOqikwXlxNDk9UkYYxv1BcBVzUzXTR68tVJe_NIruyaQw" target="_blank" class="li-card">ATT - 1/2 E MEP </a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EuVPukqVKhxItDSjBIOlVx0B3t9IDtbgjWgKzwpLNcLCwg" target="_blank" class="li-card">LF’S</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Ei_DzXzej8RJrik19Aq6zxwBr97TNxZVPLsf9MiJnbYdjA" target="_blank" class="li-card">LPP e Forno</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Epc5zs95t1JIu_cf7cMIVTYBiKmeQqtAJw7T-otnqt9gow" target="_blank" class="li-card">TRELIÇAS</a></li>
+                    <li><a href="" target="_blank" class="li-card">CA’S - 50/60 *</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EtuBvJJ9nW5EnAxmKrViKAwBNPv6qY9T9R2qJHPopJ52yw" target="_blank" class="li-card">Geral</a></li>
+                    
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2 class="tit-card">Análise de Anomalia</h2>
+                <p class="txt-card">Arquivos de análises de anomalia realizados pela equipe Elétrica e Mecânica.</p>
+                <ul class="ul-card">
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Eht9p-SmGEZDqsrv0WCY7oQBePxOpiKX-tWM9ohvPnSwog" target="_blank" class="li-card">Análise de anomalia - ELÉTRICA</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EkQ6SuRvBdZLhMFyZ0O-61YBfCZv19478aqjSVLsva3Jwg" target="_blank" class="li-card">Análise de anomalia - MECÂNICA</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:x:/p/italo_braga/EfGLc5VRHntImhBJUNG2IKUB9mT1nH9zLV-7rsGI85wLew" target="_blank" class="li-card">PADRÃO RAF EM BRANCO</a></li>
+                
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2 class="tit-card">Ipar</h2>
+                <p class="txt-card">Arquivos Ipar, padrão , segurança - equipe elétrica e mecânica.</p>
+                <ul class="ul-card">
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/ErQMr0JyS2xGjqgD0uwdxuABpTZy3am8YDEAy0xT6DzDpQ" target="_blank" class="li-card"> Ipar - ELÉTRICA</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EmmYtGRu2mRLgF6SClBYdsMB1D6LMDUFUy5XqMNU6SAq0A" target="_blank" class="li-card"> Ipar - MECÂNICA</a></li>
+                    
+                
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2 class="tit-card">Treinamentos disponíveis <br> Manuais técnicos </h2>
+                <p class="txt-card">Treinamentos diversos contemplando funcionalidades do SAP, IBA, AUTOMAÇÃO e manuais técnicos de equipamentos usados na pela manutenção.</p>
+                <ul class="ul-card">
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/ErpB7XJk25xLpon3_FitQXABQ-mbFE0pPDw28zUh5wfxMg" target="_blank" class="li-card">Pasta geral dos treinamentos </a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/ErbPkWMuFLJMnvlvPixVULUB7TOPkX8fQ7OC5LK9u-jAsw" target="_blank" class="li-card">Automação</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Eq-ivKeoEt1LhInIdswr5rkBpQ1_vmnls8sOWAqVSYC-9g" target="_blank" class="li-card">Manuais técnicos</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Eh00Q4lcSAVNkpvxaXVTvs4B0AecPECoFB7GDZ4-vno68A" target="_blank" class="li-card">SAP</a></li>
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/Eufr8vwV01lAm5RZphD9xrQBgUpIbem2EmV5x6hraO1zQQ" target="_blank" class="li-card">IBA</a></li>
+                </ul>
+            </div>
+
+
+            <div class="card">
+                <a href="https://www.schlattergroup.com/en/about-us/schlatter-worldwide/schlatter-brasil/"><img src="/images/Logo_Schlatter.svg.png" alt="" class="logo-Schlatter"></a>
+                <h2 class="tit-card">Máquinas de Solda - Schlatter</h2>
+                <p class="txt-card">Todos os arquivos referentes a máquina de solda schlatter modelos E, M e S utilizadas nos processos da trefilaria. </p>
+                <ul class="ul-card">
+                    <li><a href="https://arcelormittal-my.sharepoint.com/:f:/p/italo_braga/EspIHDCX63RPg09JjduiB5QBz_HCjR8P0-RsYj4Kk3blUQ" target="_blank" class="li-card">Máquinas de Solda Mod. M/E/S</a></li>
+                </ul>
+            </div>
+
 
             
 
@@ -316,8 +378,7 @@
     
     
 
-
-
+                <!-- -------  POPUPS ------- -->
 
     <div id="popup" class="popup">
       <div class="popup-content">
@@ -379,22 +440,19 @@
             <div class="div-linha"></div>
 
             <ul class="ul-card">
-                <h3 class="subtit-popup-sig">Gestão de Documentos</h3>
-                <li><a href="https://sig.arcelormittal.com.br/sig/cadastroDocumento.do?method=load&last=m31&timestamp=1736456966707&method=" target="_blank" class="li-card">Documentos</a></li>
-                <ul class="ul-subtit-popup">
-                    <h4 class="sub-subtit-popup">Consultas</h4>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/consultaPendenciaSistema.do?method=load&last=m31m33&timestamp=1736456977406&method=" target="_blank" class="li-card">Pendencia Documento</a></li>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/consultaEstatisticaDocumento.do?method=load&last=m31m33&timestamp=1736457003063&method=" target="_blank" class="li-card">Estátistica Documento</a></li>
-                </ul>
-            </ul>
-
-            <div class="div-linha"></div>
-
-            <ul class="ul-card">
                 <h3 class="subtit-popup-sig">VPS - Value Plan System/ALFA</h3>
                 <ul class="ul-subtit-popup">
                     <h4 class="sub-subtit-popup">Gerenciamento de Projetos</h4>
                     <li><a href="https://sig.arcelormittal.com.br/sig/manterProjetos.do?method=loadConsulta&last=m36m37&timestamp=1736457018127&method=" target="_blank" class="li-card">Manutenção de Projetos</a></li>
+                </ul>
+                <ul class="ul-card">
+                    <h3 class="subtit-popup-sig">Gestão de Documentos</h3>
+                    <li><a href="https://sig.arcelormittal.com.br/sig/cadastroDocumento.do?method=load&last=m31&timestamp=1736456966707&method=" target="_blank" class="li-card">Documentos</a></li>
+                    <ul class="ul-subtit-popup">
+                        <h4 class="sub-subtit-popup">Consultas</h4>
+                        <li><a href="https://sig.arcelormittal.com.br/sig/consultaPendenciaSistema.do?method=load&last=m31m33&timestamp=1736456977406&method=" target="_blank" class="li-card">Pendencia Documento</a></li>
+                        <li><a href="https://sig.arcelormittal.com.br/sig/consultaEstatisticaDocumento.do?method=load&last=m31m33&timestamp=1736457003063&method=" target="_blank" class="li-card">Estátistica Documento</a></li>
+                    </ul>
                 </ul>
                 <ul class="ul-subtit-popup">
                     <h4 class="sub-subtit-popup">Relatórios</h4>
@@ -435,7 +493,7 @@
             
             <div class="div-matrizesBloqueio">
                 <ul class="ul-matrizes">
-                    <h3 class="h3-matrizes">Trefilados Galpão 1</h3>
+                    <h3 class="h3-matrizes">Galpão 1</h3>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/ProcedureView?procedureId=2834232" target="_blank">Amarradeira CA50 BRE</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838347" target="_blank">Amarradeiras CA60 1 e 2</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838348" target="_blank">Amarradeiras CA60 3</a></li>
@@ -466,7 +524,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-matrizes">
-                    <h3 class="h3-matrizes">Trefilados Galpão 2</h3>
+                    <h3 class="h3-matrizes">Galpão 2</h3>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838489" target="_blank">Chiller Mecalor 1</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838491" target="_blank">Chiller Mecalor 2</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838737" target="_blank">PR-10</a></li>
@@ -486,7 +544,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-matrizes">
-                    <h3 class="h3-matrizes">Trefilados Galpão 3</h3>
+                    <h3 class="h3-matrizes">Galpão 3</h3>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=2392639" target="_blank">Chiller 1</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=2392641" target="_blank">Chiller 2</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=1838445" target="_blank">LF03</a></li>
@@ -504,7 +562,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-matrizes">
-                    <h3 class="h3-matrizes">Trefilados Galpão 4</h3>
+                    <h3 class="h3-matrizes">Galpão 4</h3>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=2395249" target="_blank">PR-26</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=2395247" target="_blank">PR-27</a></li>
                     <li class="li-matrizes"><a href="https://bradylink360.bradyid.com/FindCreateFiles?machineId=2391565" target="_blank">Tela MEP Coluna</a></li>
@@ -521,7 +579,7 @@
         <div class="popup-content-2">
             <div class="div-matrizesBloqueio">
                 <ul class="ul-cartasbloqueio">
-                    <h3 class="h3-matrizes">Trefilados Galpão 1</h3>
+                    <h3 class="h3-matrizes">Galpão 1</h3>
                     <h4 class="h4-cartas-bloqueio h3-matrizes">Cartas de Bloqueio</h4>
                     <li class="li-matrizes"><a href="" target="_blank">Forno LPP *</a></li>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EXMtJZGNpKpIot3FztEMfMEBSYkTBYfe30oWlVp46LmlCQ?e=f0JTzf" target="_blank">BRE (amarradeira)</a></li>
@@ -537,7 +595,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-cartasbloqueio">
-                    <h3 class="h3-matrizes">Trefilados Galpão 2</h3>
+                    <h3 class="h3-matrizes">Galpão 2</h3>
                     <h4 class="h4-cartas-bloqueio h3-matrizes">Cartas de Bloqueio</h4>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EdCzGyby2pBEqc5odZfkf_QBgnnTgX-0ShWHMypjQ8FAhw?e=nv2KWn" target="_blank">ATT01</a></li>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EVqygCvep2NJnK2MxLO3GqMBMoVaIEN6dJDgKlVfx0BF8A?e=GDGKzu" target="_blank">TSD01</a></li>
@@ -553,7 +611,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-cartasbloqueio">
-                    <h3 class="h3-matrizes">Trefilados Galpão 3</h3>
+                    <h3 class="h3-matrizes">Galpão 3</h3>
                     <h4 class="h4-cartas-bloqueio h3-matrizes">Cartas de Bloqueio</h4>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EXDCp-gCOfBKjQEuoW0S4K4BsapMbG7axyonnbf51a1_Pg?e=vXHoQ5" target="_blank">LF04</a></li>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EeBxwy6lOlNCmlXLwDhK0bEBME-h_TB-2qX2McuPp0Z96A?e=SNRBWk" target="_blank">ATT02</a></li>
@@ -567,7 +625,7 @@
 
             <div class="div-matrizesBloqueio">
                 <ul class="ul-cartasbloqueio">
-                    <h3 class="h3-matrizes">Trefilados Galpão 4</h3>
+                    <h3 class="h3-matrizes">Galpão 4</h3>
                     <h4 class="h4-cartas-bloqueio h3-matrizes">Cartas de Bloqueio</h4>
                     <li class="li-matrizes"><a href="https://arcelormittal-my.sharepoint.com/:w:/p/italo_braga/EVdqld1u7ihDtFVlUsJZKtEB5IM1LPQWX_1iw2r5d-J2PA?e=o7ahT3" target="_blank">TELA COLUNA MEP</a></li>
 

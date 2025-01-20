@@ -5,7 +5,7 @@
 }
 body{
     background: linear-gradient(#fd1d1d,#fcb045,#f89100);
-    height: 400vh;
+    height: auto;
     font-family: 'Poppins', sans-serif;
 
 }
@@ -44,6 +44,7 @@ body{
     background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-size: 18px;
 
 }
 .Input-pesquisa-header{
@@ -85,7 +86,7 @@ body{
     height: 15px;
 }
 .perfil-usuário{
-    transform: translateX(-30px);
+    padding-right: 30px;
 }
 
 .nav-left-fixed{
@@ -155,7 +156,7 @@ body{
 
 }
 .h3-obj{
-    width: 50%;
+    width: 70%;
 }
 .div-video{
     width: 50%;
@@ -168,22 +169,26 @@ body{
 
 .produto-trefila{
     display: flex;
-    flex-wrap: wrap;
+    
+}
+.div-align-produtos{
+    display: grid;
 }
 .back-produtos{
     margin: 20px 70px;
     width: 150px;
     height: 150px;
-    background-color: rgba(128, 128, 128, 0.555);
+    background-color: rgba(255, 255, 255, 0.555);
     border-radius: 50%;
     transition: 0.5s ease;
 }
 .back-produtos:hover{
-    background-color: rgb(97, 97, 97);
+    background-color: rgb(255, 255, 255);
     transform: scale(1.2);
 }
 .img-produto{
-    transform: translateX(-30%);
+    transform: translateX(-20%) scale(0.8);
+    
 }
 .div-total-cards{
     background-color: transparent;
@@ -230,6 +235,7 @@ body{
     cursor: pointer;
     padding: 5px;
     border-radius: 10px;
+    font-size: 19px;
     
     
 
@@ -501,3 +507,17 @@ a{
     height: auto;
     text-align: center;
 }
+.ul-sobressalente{
+    display: flex;
+    flex-wrap: wrap;
+    
+    
+}
+.ul-sobressalente li{
+    margin-left: 45px;
+
+ }
+ .logo-Schlatter{
+    width: 200px;
+    height: auto;
+ }
