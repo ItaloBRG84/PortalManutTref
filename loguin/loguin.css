@@ -95,16 +95,17 @@ background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
 
 }
 
-.input-loguin{
+#number-sequence{
     border-style: none;
     border-radius: 20px;
-    width: 30%;
+    width: 100%;
     padding: 10px;
     transition: 0.5s ease;
     margin-top: 10px;
+    margin-right: 40px;
 
 }
-.input-loguin:hover{
+#number-sequence:hover{
     transform: scale(1.2);
     background-color: rgb(238, 238, 238);
 
@@ -124,4 +125,12 @@ background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
     background-color: #f76f00;
     color: white;
     
+}
+#login-form{
+  display: grid;
+}
+
+#message {
+  display: none;
+  color: red;
 }
