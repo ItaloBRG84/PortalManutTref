@@ -58,7 +58,7 @@ body{
     justify-content: center;
     width: auto;
     height: auto;
-    border-radius: 50%;
+    border-radius: 10%;
 
 
 
@@ -165,12 +165,72 @@ background: linear-gradient(45deg, #fd1d1d,#fcb045, #833ab4);
 </style>
 <script>
 
- // Lista de sequências válidas
- const validNumbers = ["1234", "50114533", "", ""];
+// Associa cada número válido a um nome aleatório
+const validNumbersWithNames = {
+    "50114533": "Italo Braga",
+    "50116015": "Frederico",
+    "50116017": "Matheus",
+    "50112749": "Paulo Victor",
+    "50059601": "Katielly Ribeiro",
+    "40002861": "Rômulo da Silva",
+    "40000663": "Carlos Eduardo",
+    "40002255": "Leandro Izidoro",
+    "40001708": "Diego Alves",
+    "40000376": "Ronaldo Paulo",
+    "40000930": "Edivaldo Fernandes",
+    "40000525": "Terrenze Maclov"
+};
 
 // Captura o formulário e elementos importantes
 const form = document.getElementById("login-form");
 const message = document.getElementById("message");
+
+// Cria o popup com animação de digitação
+const createPopup = (name) => {
+    const popup = document.createElement("div");
+    popup.style.width = "100%";
+    popup.style.height = "100%";
+    popup.style.position = "fixed";
+    popup.style.top = "50%";
+    popup.style.left = "50%";
+    popup.style.transform = "translate(-50%, -50%)";
+    popup.style.padding = "20px";
+    popup.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+    popup.style.color = "#fff";
+    popup.style.borderRadius = "10px";
+    popup.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+    popup.style.fontSize = "3em";
+    popup.style.textAlign = "center";
+    popup.style.zIndex = "1000";
+    popup.style.overflow = "hidden";
+    popup.style.whiteSpace = "nowrap";
+    popup.style.fontWeight = "bold"; // Texto em negrito
+    popup.style.display = "flex"; // Usar flexbox
+    popup.style.alignItems = "center"; // Alinhar verticalmente
+    popup.style.justifyContent = "center"; // Alinhar horizontalmente
+    document.body.appendChild(popup);
+
+    const text = `Olá, ${name}!`;
+    let index = 0;
+
+    const typeEffect = () => {
+        if (index < text.length) {
+            popup.textContent += text[index];
+            index++;
+            setTimeout(typeEffect, 50); // Velocidade da digitação 
+        } else {
+            // Remove o popup após 1 segundo
+            setTimeout(() => {
+                popup.style.transition = "opacity 0.5s";
+                popup.style.opacity = "0";
+                setTimeout(() => popup.remove(), 500);
+            }, 1000);
+        }
+    };
+
+    typeEffect();
+};
+
 
 // Adiciona evento de submissão ao formulário
 form.addEventListener("submit", function (event) {
@@ -178,15 +238,19 @@ form.addEventListener("submit", function (event) {
 
     const inputSequence = document.getElementById("number-sequence").value.trim();
 
-    if (validNumbers.includes(inputSequence)) {
-        // Redireciona para outra página se a sequência for válida
-        window.location.href = "html/firstpage.html"; // Substitua pelo URL da página desejada
+    if (validNumbersWithNames[inputSequence]) {
+        const name = validNumbersWithNames[inputSequence];
+        createPopup(name); // Exibe o popup
+
+        // Redireciona para outra página após um pequeno atraso
+        setTimeout(() => {
+            window.location.href = "html/firstpage.html"; // Substitua pelo URL da página desejada
+        }, 2000);
     } else {
         // Mostra a mensagem de erro
         message.style.display = "block";
     }
 });
-
 
   </script>
 </body>
