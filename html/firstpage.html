@@ -145,13 +145,13 @@
 
 
 
-        <div class="card">
+        <!--<div class="card">
             <h2 class="tit-card"><a href="https://sig.arcelormittal.com.br/sig/login" target="_blank">SIG</a></h2>
             <p class="txt-card">Sistema Integrado de Gestão, usada para coletar, processar e fornecer informações úteis como: relatórios de desempenho, monitoramento de KPIs (Indicadores-Chave de Desempenho),Gestão de recursos empresariais.</p>
 
             <button id="openPopupSIG" class="Btn-sig-popup">Popup Funções SIG</button>
   
-        </div>
+        </div>-->
 
 
         
@@ -297,11 +297,19 @@
 
 
 
-                <div class="div-banner"><img src="../images/channels4_banner.jpg" alt="" class="banner-separacao"></div>
+                <!--<div class="div-banner"><img src="../images/channels4_banner.jpg" alt="" class="banner-separacao"></div>-->
 
-
-            
+    
     </div>
+
+
+    <div class="banner-video">
+        <video autoplay muted loop>
+            <source src="https://brasil.arcelormittal.com/Images/produtos-solucoes/video-campanha-mundial-arcelor.mp4" type="video/mp4">
+            
+        </video>
+    </div>
+
     <div class="div-back-documentosgeral">
         <div class="div-h1-documentosgeral">
             <h1 class="h1-func">Documentos de uso Geral Manutenção</h1>
@@ -518,21 +526,7 @@
                     <li><a href="https://sig.arcelormittal.com.br/sig/exportarRelatorioGanhosGerais.do?method=load&last=m36m39&timestamp=1736457147199&method=" target="_blank" class="li-card">Ganhos Gerais</a></li>
                 </ul>
             </ul>
-            
-            <div class="div-linha"></div>
 
-            <ul class="ul-card">
-                <h3 class="subtit-popup-sig">Avaliação de Treinamento</h3>
-                <ul class="ul-subtit-popup">
-                    <h4 class="sub-subtit-popup">Cadastros Básicos</h4>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/manutencaoTreinamentoTR.do?method=load&last=m48m49&timestamp=1736457165803&method=" target="_blank" class="li-card">Treinamentos</a></li>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/cadastroTreinamentoObrigatorioTR.do?method=load&last=m48m49&timestamp=1736457181253&method=" target="_blank" class="li-card">Treinamentos Obrigatórios</a></li>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/cadastroTotemTR.do?method=load&last=m48m49&timestamp=1736457192759&method=" target="_blank" class="li-card">Totem</a></li>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/consultaUsuarioTR.do?method=load&last=m48m49&timestamp=1736457203447&method=" target="_blank" class="li-card">Usuário</a></li>
-                    <li><a href="https://sig.arcelormittal.com.br/sig/associacaoUsuarioTreinamentoTR.do?method=load&last=m48m49&timestamp=1736457226037&method=" target="_blank" class="li-card">Usuário X Treinamento</a></li>
-                </ul>
-                <li><a href="https://sig.arcelormittal.com.br/sig/consultaTreinamentoTR.do?method=load&last=m48m49&timestamp=1736457234803&method=" target="_blank" class="li-card">Consultas</a></li>
-            </ul>
 
 
         </div>
@@ -1034,10 +1028,7 @@ body{
     width: 50%;
     height: auto;
 }
-.div-iframe video{
-    width: 100%;
-    height: 100%;
-}
+
 
 .produto-trefila{
     display: flex;
@@ -1134,9 +1125,12 @@ body{
 }
 .ul-card{
     
-    margin-top: 10px;
-    margin-left: 40px;
-    margin-bottom: 10px;
+   width: 100%;
+   height: auto;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
 }
 
 .li-card{
@@ -1419,12 +1413,12 @@ a{
     justify-content: center;
 }
 .div-iframes{
-width: 95%;
-height: 500px;
-background-color: white;
-margin: 2rem;
-display: flex;
-text-align: center;
+    width: 95%;
+    height: 500px;
+    background-color: white;
+    margin: 2rem;
+    display: flex;
+    text-align: center;
 
 }
 .iframe-redirection{
@@ -1438,6 +1432,24 @@ text-align: center;
     margin: 2rem;
     padding-left: 8rem;
 }
+.banner-video{
+    width: 100%;
+    height: auto;
+    max-height: 700px;
+    
+}
+.banner-video video{
+    
+      min-width: 100%;
+      max-height: 700px;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      object-fit: cover;
+}
+
+
+
 </style>
 
 
