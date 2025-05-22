@@ -95,7 +95,9 @@ body{
     left: 0; 
     width: 150px;
     height: 100vh;
-    background-color: lightcoral;
+    background-image: url(images/imgtorrearcelor.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
     color: white;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
