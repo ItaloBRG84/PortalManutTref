@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agregador de horas de parada</title>
+<link href="https://cdn.jsdelivr.net/npm/modern-normalize/modern-normalize.min.css" rel="stylesheet">
+<style>
+  /* mesmo estilo visual do seu arquivo original (resumido) */
+  body{font-family:Inter,system-ui,Segoe UI,Roboto,Arial;max-width:1100px;margin:28px auto;padding:12px;color:#111;background:#f9fbfd}
+  h1{font-size:22px;margin-bottom:8px} p.lead{margin-top:0;color:#444;font-size:14px}
+  .card{border:1px solid #e3e3e3;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,0.04);background:white}
+  label{display:block;margin:8px 0 6px;font-weight:600;font-size:13px}
+  select,input[type="file"],button{width:100%;padding:8px;border-radius:8px;border:1px solid #d0d0d0}
+  .row{display:flex;gap:12px}.col{flex:1}.small{font-size:12px;color:#666}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px} th,td{padding:8px;border:1px solid #eee;text-align:left} th{background:#f0f4ff}
+  .controls{display:flex;gap:8px;margin-top:8px} .controls button{width:auto}
+  button{cursor:pointer;background:#0078d4;color:white;font-weight:500;transition:0.2s} button:hover{background:#005fa3}
+  button:disabled{background:#ccc;cursor:not-allowed} #clear-btn{background:#fff;color:#333;border:1px solid #ccc}
+  .hint{font-size:12px;color:#666;margin-top:6px} .footer{font-size:12px;color:#666;margin-top:14px;text-align:center}
+  .error{color:#b30000;font-weight:500}
+  @media (max-width:720px){.row{flex-direction:column}}
+</style>
+</head>
+<body>
+  <h1>Agregador de Horas de Parada</h1>
+  
+
+  <div class="card">
+    <label>1) Selecione o arquivo Excel (.xlsx / .xls / .csv)</label>
+    <input id="file-input" type="file" accept=".xlsx,.xls,.csv" />
+    <div class="hint">Processamento local — nenhum dado sai do seu navegador.</div>
+  </div>
+
+  <div id="sheet-card" class="card" style="display:none">
+    <label>2) Escolha a aba da planilha</label>
+    <select id="sheet-select"></select>
+  </div>
+
+  <div id="map-card" class="card" style="display:none">
+    <label>3) Mapeie as colunas conforme sua planilha (linha 8 = cabeçalho)</label>
+    <div class="row">
+      <div class="col">
+        <label>Coluna de Data</label>
+        <select id="col-date"></select>
+      </div>
+      <div class="col">
+        <label>Coluna de Turno (letra)</label>
+        <select id="col-shift"></select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <div class="col">
+        <label>Coluna de Descrição da Falha</label>
+        <select id="col-desc"></select>
+      </div>
+      <div class="col">
+        <label>Coluna de Horas de Parada (qualquer formato)</label>
+        <select id="col-hours"></select>
+      </div>
+    </div>
+
+    <div class="controls" style="margin-top:12px">
+      <button id="process-btn">Processar e Agregar</button>
+      <button id="download-btn" disabled>Baixar CSV</button>
+      <button id="clear-btn">Limpar</button>
+    </div>
+    <div id="status" class="hint"></div>
+  </div>
+
+  <div id="result-card" class="card" style="display:none">
+    <label>Resultado</label>
+    <div id="result-summary" class="small"></div>
+    <div id="table-wrap" style="overflow:auto;margin-top:8px"></div>
+  </div>
+
+  <div class="footer">Arquivo gerado com separador <strong>;</strong> (abre direto no Excel PT-BR).</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+  // utilitários
+  const $ = id => document.getElementById(id);
+  const show = el => el.style.display='block';
+  const hide = el => el.style.display='none';
+  const trimStr = s => (s||'').toString().trim();
+
+  // elements
+  const fileInput = $('file-input'), sheetSelect = $('sheet-select'),
+        sheetCard = $('sheet-card'), mapCard = $('map-card'), resultCard = $('result-card'),
+        colDate = $('col-date'), colShift = $('col-shift'), colDesc = $('col-desc'), colHours = $('col-hours'),
+        processBtn = $('process-btn'), downloadBtn = $('download-btn'), clearBtn = $('clear-btn'),
+        status = $('status'), tableWrap = $('table-wrap'), resultSummary = $('result-summary');
+
+  let workbook = null, currentSheet = null, currentRows = [];
+
+  /* -------------------------
+     Função robusta de parsing:
+     converte 'raw' para segundos inteiros
+     aceita:
+      - strings "HH:MM:SS" ou "H:MM" ou "MM:SS"
+      - strings decimais "1,5" (horas decimais) ou "1.5"
+      - números (Excel serial de data/hora ou horas inteiras)
+  ------------------------- */
+  function parseDurationToSeconds(raw){
+    if(raw === null || raw === undefined) return NaN;
+    // se já for número
+    if(typeof raw === 'number'){
+      // heurística: números muito pequenos (<= 3) → pode ser serial Excel (dias)
+      // tratar como dias fracionários => segundos = raw * 86400
+      if(raw > 0 && raw < 3){
+        return Math.round(raw * 86400);
+      } else {
+        // se for inteiro/grande, considerar como horas (ex: 1 = 1 hora? ou 24?). Aqui assumimos horas
+        return Math.round(raw * 3600);
+      }
+    }
+
+    // string: retirar espaços
+    const s = String(raw).trim();
+    if(s === '') return NaN;
+
+    // caso contenha ":" -> HH:MM:SS ou H:MM ou MM:SS
+    if(s.indexOf(':') !== -1){
+      const parts = s.split(':').map(p => p.trim());
+      // converter partes para números (aguenta horas > 24)
+      const nums = parts.map(x => Number(x));
+      if(nums.some(n => Number.isNaN(n))) return NaN;
+      if(nums.length === 3){
+        const [h,m,sec] = nums;
+        return Math.round(h*3600 + m*60 + sec);
+      } else if(nums.length === 2){
+        // interpretar como HH:MM (horas:minutos)
+        const [h,m] = nums;
+        return Math.round(h*3600 + m*60);
+      } else if(nums.length === 1){
+        // só um número com :, mas não faz sentido; fallback NaN
+        return NaN;
+      }
+    }
+
+    // string sem ":" -> tentar float (coma ou ponto) → interpretar como horas decimais
+    const sNormalized = s.replace(',', '.').replace(/[^\d\.\-]/g,'');
+    const val = Number(sNormalized);
+    if(Number.isFinite(val)){
+      // interpretar como horas decimais
+      return Math.round(val * 3600);
+    }
+
+    // não interpretável
+    return NaN;
+  }
+
+  // segundos -> "HH:MM:SS" (horas ilimitadas)
+  function secondsToHMS(sec){
+    sec = Math.round(sec);
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
+  // leitura do arquivo
+  fileInput.addEventListener('change', e=>{
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    status.textContent = 'Lendo arquivo...';
+    const reader = new FileReader();
+    reader.onload = evt => {
+      try{
+        workbook = XLSX.read(evt.target.result, {type:'array'});
+        sheetSelect.innerHTML = '';
+        workbook.SheetNames.forEach(name=>{
+          const opt = document.createElement('option'); opt.value = name; opt.textContent = name;
+          sheetSelect.appendChild(opt);
+        });
+        show(sheetCard); show(mapCard);
+        sheetSelect.value = workbook.SheetNames[0];
+        loadSheetHeaders();
+      }catch(err){
+        status.innerHTML = `<span class="error">Erro ao ler arquivo: ${err.message || err}</span>`;
+      }
+    };
+    reader.readAsArrayBuffer(f);
+  });
+
+  sheetSelect.addEventListener('change', loadSheetHeaders);
+
+  // monta headers (linha 8) e currentRows (a partir da linha 9)
+  function loadSheetHeaders(){
+    currentSheet = sheetSelect.value;
+    const ws = workbook.Sheets[currentSheet];
+    // use range:7 para começar a ler a partir da linha 8 como você usa
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:'', range:7});
+    const headerRow = rows[0] || [];
+    // popular selects com nomes das colunas
+    populateSelect(colDate, headerRow);
+    populateSelect(colShift, headerRow);
+    populateSelect(colDesc, headerRow);
+    populateSelect(colHours, headerRow);
+
+    // montar objetos de dados (linhas após cabeçalho)
+    currentRows = [];
+    for(let i=1;i<rows.length;i++){
+      const rowArray = rows[i];
+      const obj = {};
+      for(let c=0;c<headerRow.length;c++){
+        const key = headerRow[c] || ('COL'+(c+1));
+        obj[key] = rowArray[c];
+      }
+      // também guardar índice da linha real (útil para depuração)
+      obj.__rowIndex = i + 8; // porque rows[0] é linha 8 do excel; rows[1] -> linha 9 -> i=1 => 9 -> i+8
+      currentRows.push(obj);
+    }
+    status.textContent = `Aba "${currentSheet}" carregada — ${currentRows.length} linhas (a partir da linha 9).`;
+    hide(resultCard);
+  }
+
+  function populateSelect(sel, headers){
+    sel.innerHTML = '';
+    const opt0 = document.createElement('option'); opt0.value=''; opt0.textContent='-- escolher --'; sel.appendChild(opt0);
+    headers.forEach(h=>{
+      const opt = document.createElement('option'); opt.value = h; opt.textContent = h || '(vazio)'; sel.appendChild(opt);
+    });
+  }
+
+  // processamento
+  processBtn.addEventListener('click', ()=>{
+    const dateKey = colDate.value, shiftKey = colShift.value, descKey = colDesc.value, hoursKey = colHours.value;
+    if(!dateKey || !shiftKey || !descKey || !hoursKey){
+      status.innerHTML = '<span class="error">Mapeie as colunas: Data, Turno, Descrição e Horas.</span>';
+      return;
+    }
+
+    const map = {}; // chave -> totalSegundos, rowsCount, rowsIncluded
+    let processed = 0, ignored = 0;
+
+    for(const row of currentRows){
+      const rawDate = row[dateKey];
+      const rawShift = row[shiftKey];
+      const rawDesc = row[descKey];
+      const rawDur = row[hoursKey];
+
+      // requisitos mínimos
+      if((rawDate === '' || rawDate === null || rawDate === undefined) ||
+         (rawShift === '' || rawShift === null || rawShift === undefined) ||
+         (rawDesc === '' || rawDesc === null || rawDesc === undefined) ){
+        ignored++; continue;
+      }
+
+      // parse duration -> segundos (AGORA robusto)
+      const segs = parseDurationToSeconds(rawDur);
+      if(Number.isNaN(segs)){
+        // ignorar somente a linha (mas contar como ignorada)
+        ignored++; continue;
+      }
+
+      // normalizar data/turno/desc para chave
+      const nd = normalizeKeyDate(rawDate);
+      const ns = trimStr(rawShift);
+      const ndx = trimStr(rawDesc);
+      const key = `${nd}||${ns}||${ndx}`;
+
+      if(!(key in map)) map[key] = { totalSeg: 0, count:0, rows: [] };
+      map[key].totalSeg += segs;
+      map[key].count += 1;
+      map[key].rows.push({rowIndex: row.__rowIndex, rawDur, segs});
+      processed++;
+    }
+
+    // montar resultado array ordenado
+    const keys = Object.keys(map).sort();
+    const results = keys.map(k=>{
+      const [date, shift, desc] = k.split('||');
+      const group = map[k];
+      return {
+        date, shift, desc,
+        totalSeconds: group.totalSeg,
+        totalHMS: secondsToHMS(group.totalSeg),
+        rowsCount: group.count,
+        rows: group.rows
+      };
+    });
+
+    // renderizar tabela
+    renderTable(results);
+
+    // status e CSV
+    resultSummary.textContent = `Linhas processadas: ${processed}, ignoradas: ${ignored}, grupos: ${results.length}.`;
+    downloadBtn.dataset.csv = buildCSV(results);
+    downloadBtn.disabled = results.length === 0;
+    show(resultCard);
+    status.textContent = 'Processamento concluído.';
+  });
+
+  // auxiliar: normaliza data para string YYYY-MM-DD quando possível (para agrupar corretamente)
+  function normalizeKeyDate(v){
+    if(v === null || v === undefined) return '';
+    if(typeof v === 'number'){
+      const d = XLSX.SSF.parse_date_code(v);
+      if(d) return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+    }
+    // se for Date
+    if(Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)){
+      const yyyy = v.getFullYear(), mm = String(v.getMonth()+1).padStart(2,'0'), dd = String(v.getDate()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    // texto: tentar DD/MM/YYYY ou parse
+    const s = String(v).trim();
+    const dm = s.match(/^(\d{1,2})[\/\-\.\s](\d{1,2})[\/\-\.\s](\d{2,4})$/);
+    if(dm){
+      let day = dm[1].padStart(2,'0'), month = dm[2].padStart(2,'0'), year = dm[3];
+      if(year.length === 2) year = '20'+year;
+      return `${year}-${month}-${day}`;
+    }
+    // fallback: ISO parse
+    const parsed = Date.parse(s);
+    if(!isNaN(parsed)){
+      const dt = new Date(parsed);
+      return dt.toISOString().slice(0,10);
+    }
+    return s;
+  }
+
+  // render tabela
+  function renderTable(arr){
+    if(arr.length === 0){ tableWrap.innerHTML = '<div>Nenhum resultado.</div>'; return; }
+    let html = '<table><thead><tr><th>Data</th><th>Turno</th><th>Descrição</th><th>Total (HH:MM:SS)</th><th>Linhas</th></tr></thead><tbody>';
+    arr.forEach(r=>{
+      html += `<tr>
+        <td>${escapeHtml(r.date)}</td>
+        <td>${escapeHtml(r.shift)}</td>
+        <td>${escapeHtml(r.desc)}</td>
+        <td>${r.totalHMS}</td>
+        <td>${r.rowsCount}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    tableWrap.innerHTML = html;
+  }
+
+  // gerar CSV
+  function buildCSV(arr){
+    const header = ['Data','Turno','Descrição','Total_HH:MM:SS','QtdLinhas'];
+    const rows = [ header.join(';') ];
+    arr.forEach(r => {
+      const descEsc = (r.desc||'').toString().replace(/"/g,'""');
+      rows.push([ r.date, r.shift, `"${descEsc}"`, r.totalHMS, r.rowsCount ].join(';'));
+    });
+    return rows.join('\n');
+  }
+
+  // escape simples
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // download CSV
+  downloadBtn.addEventListener('click', ()=>{
+    const csv = downloadBtn.dataset.csv || '';
+    if(!csv) return;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'paradas_agrupadas.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  // limpar
+  clearBtn.addEventListener('click', ()=>{
+    fileInput.value=''; sheetSelect.innerHTML=''; colDate.innerHTML=''; colShift.innerHTML=''; colDesc.innerHTML=''; colHours.innerHTML='';
+    hide(sheetCard); hide(mapCard); hide(resultCard); status.textContent=''; tableWrap.innerHTML=''; resultSummary.textContent='';
+    workbook = null; currentRows = [];
+    downloadBtn.disabled = true;
+  });
+  </script>
+</body>
+</html>
