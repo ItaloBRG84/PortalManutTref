@@ -23,13 +23,12 @@
 </style>
 </head>
 <body>
-  <h1>Agregador de Horas de Parada</h1>
-  
+  <h1>Agregador de Horas de Parada (com CONJUNTO / SUBCONJUNTO)</h1>
 
   <div class="card">
     <label>1) Selecione o arquivo Excel (.xlsx / .xls / .csv)</label>
     <input id="file-input" type="file" accept=".xlsx,.xls,.csv" />
-    <div class="hint">Processamento local — nenhum dado sai do seu navegador.</div>
+    <div class="hint">Processamento local — nenhum dado sai do seu navegador. Cabeçalho esperado na linha 8 (linha 8 contém os nomes das colunas).</div>
   </div>
 
   <div id="sheet-card" class="card" style="display:none">
@@ -52,12 +51,23 @@
 
     <div class="row" style="margin-top:8px">
       <div class="col">
-        <label>Coluna de Descrição da Falha</label>
+        <label>Coluna de Descrição / Observação (opcional)</label>
         <select id="col-desc"></select>
       </div>
       <div class="col">
         <label>Coluna de Horas de Parada (qualquer formato)</label>
         <select id="col-hours"></select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <div class="col">
+        <label>Coluna CONJUNTO (obrigatório, normalmente coluna P)</label>
+        <select id="col-conj"></select>
+      </div>
+      <div class="col">
+        <label>Coluna SUBCONJUNTO (opcional, normalmente coluna Q)</label>
+        <select id="col-sub"></select>
       </div>
     </div>
 
@@ -89,6 +99,7 @@
   const fileInput = $('file-input'), sheetSelect = $('sheet-select'),
         sheetCard = $('sheet-card'), mapCard = $('map-card'), resultCard = $('result-card'),
         colDate = $('col-date'), colShift = $('col-shift'), colDesc = $('col-desc'), colHours = $('col-hours'),
+        colConj = $('col-conj'), colSub = $('col-sub'),
         processBtn = $('process-btn'), downloadBtn = $('download-btn'), clearBtn = $('clear-btn'),
         status = $('status'), tableWrap = $('table-wrap'), resultSummary = $('result-summary');
 
@@ -111,7 +122,7 @@
       if(raw > 0 && raw < 3){
         return Math.round(raw * 86400);
       } else {
-        // se for inteiro/grande, considerar como horas (ex: 1 = 1 hora? ou 24?). Aqui assumimos horas
+        // se for inteiro/grande, considerar como horas (ex: 1 = 1 hora). Assumimos horas.
         return Math.round(raw * 3600);
       }
     }
@@ -130,11 +141,9 @@
         const [h,m,sec] = nums;
         return Math.round(h*3600 + m*60 + sec);
       } else if(nums.length === 2){
-        // interpretar como HH:MM (horas:minutos)
         const [h,m] = nums;
         return Math.round(h*3600 + m*60);
       } else if(nums.length === 1){
-        // só um número com :, mas não faz sentido; fallback NaN
         return NaN;
       }
     }
@@ -143,11 +152,9 @@
     const sNormalized = s.replace(',', '.').replace(/[^\d\.\-]/g,'');
     const val = Number(sNormalized);
     if(Number.isFinite(val)){
-      // interpretar como horas decimais
       return Math.round(val * 3600);
     }
 
-    // não interpretável
     return NaN;
   }
 
@@ -198,6 +205,16 @@
     populateSelect(colShift, headerRow);
     populateSelect(colDesc, headerRow);
     populateSelect(colHours, headerRow);
+    populateSelect(colConj, headerRow);
+    populateSelect(colSub, headerRow);
+
+    // tentativa de auto-seleção por nome (insensível a maiúsculas)
+    autoSelectIfMatches(headerRow, colConj, ['conjunto','conj','conjunto_p','p']);
+    autoSelectIfMatches(headerRow, colSub, ['subconjunto','sub','sub_conjunto','q']);
+    autoSelectIfMatches(headerRow, colHours, ['horas','horas de parada','horas_parada','hours','duracao','duração']);
+    autoSelectIfMatches(headerRow, colDate, ['data','date']);
+    autoSelectIfMatches(headerRow, colShift, ['turno','shift']);
+    autoSelectIfMatches(headerRow, colDesc, ['observação','observacao','descri','descrição','descricao','obs']);
 
     // montar objetos de dados (linhas após cabeçalho)
     currentRows = [];
@@ -224,61 +241,91 @@
     });
   }
 
+  function autoSelectIfMatches(headers, selElement, candidates){
+    const lowCands = candidates.map(x=>x.toLowerCase());
+    for(const h of headers){
+      if(!h) continue;
+      const low = String(h).toLowerCase();
+      for(const c of lowCands){
+        if(low.includes(c)){
+          selElement.value = h;
+          return;
+        }
+      }
+    }
+  }
+
   // processamento
   processBtn.addEventListener('click', ()=>{
-    const dateKey = colDate.value, shiftKey = colShift.value, descKey = colDesc.value, hoursKey = colHours.value;
-    if(!dateKey || !shiftKey || !descKey || !hoursKey){
-      status.innerHTML = '<span class="error">Mapeie as colunas: Data, Turno, Descrição e Horas.</span>';
+    const dateKey = colDate.value, shiftKey = colShift.value, descKey = colDesc.value, hoursKey = colHours.value,
+          conjKey = colConj.value, subKey = colSub.value;
+
+    // validação: Data, Turno, Horas e Conjunto são obrigatórios para o novo comportamento
+    if(!dateKey || !shiftKey || !hoursKey || !conjKey){
+      status.innerHTML = '<span class="error">Mapeie as colunas: Data, Turno, Horas e Conjunto (CONJUNTO é obrigatório).</span>';
       return;
     }
 
-    const map = {}; // chave -> totalSegundos, rowsCount, rowsIncluded
+    const map = {}; // chave -> totalSegundos, rowsCount, rows:[]
     let processed = 0, ignored = 0;
 
     for(const row of currentRows){
       const rawDate = row[dateKey];
       const rawShift = row[shiftKey];
-      const rawDesc = row[descKey];
+      const rawDesc = descKey ? row[descKey] : '';
       const rawDur = row[hoursKey];
+      const rawConj = row[conjKey];
+      const rawSub = subKey ? row[subKey] : '';
 
-      // requisitos mínimos
+      // requisitos mínimos: data, turno e duração
       if((rawDate === '' || rawDate === null || rawDate === undefined) ||
-         (rawShift === '' || rawShift === null || rawShift === undefined) ||
-         (rawDesc === '' || rawDesc === null || rawDesc === undefined) ){
+         (rawShift === '' || rawShift === null || rawShift === undefined) ){
         ignored++; continue;
       }
 
-      // parse duration -> segundos (AGORA robusto)
+      // parse duration -> segundos
       const segs = parseDurationToSeconds(rawDur);
       if(Number.isNaN(segs)){
-        // ignorar somente a linha (mas contar como ignorada)
         ignored++; continue;
       }
 
-      // normalizar data/turno/desc para chave
+      // normalizar campos para chave
       const nd = normalizeKeyDate(rawDate);
       const ns = trimStr(rawShift);
-      const ndx = trimStr(rawDesc);
-      const key = `${nd}||${ns}||${ndx}`;
+      const nc = trimStr(rawConj);
+      const nsub = trimStr(rawSub);
+      const nobs = trimStr(rawDesc);
 
-      if(!(key in map)) map[key] = { totalSeg: 0, count:0, rows: [] };
+      // montar chave com regras:
+      // - se OBSERVAÇÃO (nobs) presente: agrupar por (date, turno, conjunto, subconjunto, observação)
+      // - se OBSERVAÇÃO vazia e SUBCONJUNTO presente: agrupar por (date, turno, conjunto, subconjunto)
+      // - se OBSERVAÇÃO e SUBCONJUNTO vazios: agrupar por (date, turno, conjunto)
+      const keyParts = [nd, ns, nc];
+      if(nsub !== '') keyParts.push(nsub);
+      if(nobs !== '') keyParts.push(nobs);
+      const key = keyParts.join('||');
+
+      if(!(key in map)) map[key] = { totalSeg: 0, count:0, rows: [], conjunto: nc, subconjunto: nsub, observacao: nobs, date: nd, shift: ns };
       map[key].totalSeg += segs;
       map[key].count += 1;
-      map[key].rows.push({rowIndex: row.__rowIndex, rawDur, segs});
+      map[key].rows.push({rowIndex: row.__rowIndex, rawDur, segs, conjunto: nc, subconjunto: nsub, observacao: nobs});
       processed++;
     }
 
     // montar resultado array ordenado
     const keys = Object.keys(map).sort();
     const results = keys.map(k=>{
-      const [date, shift, desc] = k.split('||');
-      const group = map[k];
+      const g = map[k];
       return {
-        date, shift, desc,
-        totalSeconds: group.totalSeg,
-        totalHMS: secondsToHMS(group.totalSeg),
-        rowsCount: group.count,
-        rows: group.rows
+        date: g.date,
+        shift: g.shift,
+        conjunto: g.conjunto,
+        subconjunto: g.subconjunto,
+        observacao: g.observacao,
+        totalSeconds: g.totalSeg,
+        totalHMS: secondsToHMS(g.totalSeg),
+        rowsCount: g.count,
+        rows: g.rows
       };
     });
 
@@ -300,12 +347,10 @@
       const d = XLSX.SSF.parse_date_code(v);
       if(d) return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
     }
-    // se for Date
     if(Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)){
       const yyyy = v.getFullYear(), mm = String(v.getMonth()+1).padStart(2,'0'), dd = String(v.getDate()).padStart(2,'0');
       return `${yyyy}-${mm}-${dd}`;
     }
-    // texto: tentar DD/MM/YYYY ou parse
     const s = String(v).trim();
     const dm = s.match(/^(\d{1,2})[\/\-\.\s](\d{1,2})[\/\-\.\s](\d{2,4})$/);
     if(dm){
@@ -313,7 +358,6 @@
       if(year.length === 2) year = '20'+year;
       return `${year}-${month}-${day}`;
     }
-    // fallback: ISO parse
     const parsed = Date.parse(s);
     if(!isNaN(parsed)){
       const dt = new Date(parsed);
@@ -322,15 +366,17 @@
     return s;
   }
 
-  // render tabela
+  // render tabela (agora com conjunto e subconjunto)
   function renderTable(arr){
     if(arr.length === 0){ tableWrap.innerHTML = '<div>Nenhum resultado.</div>'; return; }
-    let html = '<table><thead><tr><th>Data</th><th>Turno</th><th>Descrição</th><th>Total (HH:MM:SS)</th><th>Linhas</th></tr></thead><tbody>';
+    let html = '<table><thead><tr><th>Data</th><th>Turno</th><th>Conjunto</th><th>Subconjunto</th><th>Observação</th><th>Total (HH:MM:SS)</th><th>Linhas</th></tr></thead><tbody>';
     arr.forEach(r=>{
       html += `<tr>
         <td>${escapeHtml(r.date)}</td>
         <td>${escapeHtml(r.shift)}</td>
-        <td>${escapeHtml(r.desc)}</td>
+        <td>${escapeHtml(r.conjunto)}</td>
+        <td>${escapeHtml(r.subconjunto)}</td>
+        <td>${escapeHtml(r.observacao)}</td>
         <td>${r.totalHMS}</td>
         <td>${r.rowsCount}</td>
       </tr>`;
@@ -339,13 +385,15 @@
     tableWrap.innerHTML = html;
   }
 
-  // gerar CSV
+  // gerar CSV (inclui conjunto e subconjunto)
   function buildCSV(arr){
-    const header = ['Data','Turno','Descrição','Total_HH:MM:SS','QtdLinhas'];
+    const header = ['Data','Turno','Conjunto','Subconjunto','Observacao','Total_HH:MM:SS','QtdLinhas'];
     const rows = [ header.join(';') ];
     arr.forEach(r => {
-      const descEsc = (r.desc||'').toString().replace(/"/g,'""');
-      rows.push([ r.date, r.shift, `"${descEsc}"`, r.totalHMS, r.rowsCount ].join(';'));
+      const obsEsc = (r.observacao||'').toString().replace(/"/g,'""');
+      const conjEsc = (r.conjunto||'').toString().replace(/"/g,'""');
+      const subEsc = (r.subconjunto||'').toString().replace(/"/g,'""');
+      rows.push([ r.date, r.shift, `"${conjEsc}"`, `"${subEsc}"`, `"${obsEsc}"`, r.totalHMS, r.rowsCount ].join(';'));
     });
     return rows.join('\n');
   }
@@ -367,7 +415,7 @@
 
   // limpar
   clearBtn.addEventListener('click', ()=>{
-    fileInput.value=''; sheetSelect.innerHTML=''; colDate.innerHTML=''; colShift.innerHTML=''; colDesc.innerHTML=''; colHours.innerHTML='';
+    fileInput.value=''; sheetSelect.innerHTML=''; colDate.innerHTML=''; colShift.innerHTML=''; colDesc.innerHTML=''; colHours.innerHTML=''; colConj.innerHTML=''; colSub.innerHTML='';
     hide(sheetCard); hide(mapCard); hide(resultCard); status.textContent=''; tableWrap.innerHTML=''; resultSummary.textContent='';
     workbook = null; currentRows = [];
     downloadBtn.disabled = true;
